@@ -1,0 +1,27 @@
+# https://travis-ci.org/glibin/torn
+
+# Most tests run in container mode because it's faster to start up,
+# but a few below use different configurations (as of July 2018
+# only trusty is available in containers).
+dist: xenial
+sudo: false
+
+matrix:
+    fast_finish: true
+
+language: python
+
+jobs:
+  include:
+      python: 3.7
+
+install:
+    - travis_retry pip install https://github.com/tornadoweb/tornado/zipball/master
+    - travis_retry python setup.py install
+
+script:
+    - export TARGET="-m torn.test.runtests"
+    - python -bb $TARGET
+    - python -O $TARGET
+    - LANG=C python $TARGET
+    - LANG=en_US.utf-8 python $TARGET
