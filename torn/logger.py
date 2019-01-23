@@ -27,12 +27,10 @@ class RequestIdFilter(logging.Filter):
 def configure_logging(log_file=None, log_level=logging.DEBUG, additional_loggers=None):
     additional_loggers = additional_loggers or []
 
+    log_handler = None
+
     if log_file:
         log_handler = logging.handlers.WatchedFileHandler(log_file)
-        log_handler.setFormatter(logging.Formatter(options.torn_logformat))
-        log_handler.setLevel(log_level)
-    else:
-        log_handler = logging.StreamHandler()
         log_handler.setFormatter(logging.Formatter(options.torn_logformat))
         log_handler.setLevel(log_level)
 
