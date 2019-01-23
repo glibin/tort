@@ -24,7 +24,7 @@ setup(
     description='Torn - Tornado framework helper functions',
     url='https://github.com/glibin/torn',
     download_url='https://github.com/glibin/torn/tarball/{}'.format(version),
-    packages=['torn', 'torn.test'],
+    packages=['torn', 'torn.test', 'torn.util'],
     install_requires=install_requires,
     classifiers=[
         'License :: OSI Approved :: MIT License',
