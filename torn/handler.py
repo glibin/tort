@@ -124,17 +124,17 @@ class RequestHandler(tornado.web.RequestHandler):
 
     def _process_response(self, response) -> RequestResult:
         content_type = response.headers.get('Content-Type', '').split(';')[0]
-        result = RequestResult(response, None)
 
+        data = None
         try:
             if 'xml' in content_type:
-                result.data = parse_xml(response)
+                data = parse_xml(response)
             elif content_type == 'application/json':
-                result.data = parse_json(response)
+                data = parse_json(response)
         except:
             self.log.warning('Could not parse response with Content-Type header')
 
-        return result
+        return RequestResult(response, data)
 
     async def fetch_request(self, request):
         if isinstance(request, (tuple, list)):
