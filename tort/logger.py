@@ -7,11 +7,11 @@ from tornado.options import options, define
 
 from .request_id import get
 
-LOGGER_NAME = 'torn'
-torn_log = logging.getLogger(LOGGER_NAME)
+LOGGER_NAME = 'tort'
+tort_log = logging.getLogger(LOGGER_NAME)
 
 
-define('torn_logformat', default='%(asctime)s %(levelname)s %(name)s:%(lineno)d %(request_id)s | %(message)s')
+define('tort_logformat', default='%(asctime)s %(levelname)s %(name)s:%(lineno)d %(request_id)s | %(message)s')
 
 
 class RequestIdFilter(logging.Filter):
@@ -31,7 +31,7 @@ def configure_logging(log_file=None, log_level=logging.DEBUG, additional_loggers
 
     if log_file:
         log_handler = logging.handlers.WatchedFileHandler(log_file)
-        log_handler.setFormatter(logging.Formatter(options.torn_logformat))
+        log_handler.setFormatter(logging.Formatter(options.tort_logformat))
         log_handler.setLevel(log_level)
 
     for log_name in [LOGGER_NAME, 'tornado.access', 'tornado.application', 'tornado.general'] + additional_loggers:
@@ -39,7 +39,7 @@ def configure_logging(log_file=None, log_level=logging.DEBUG, additional_loggers
         logger.addFilter(RequestIdFilter())
         logger.setLevel(log_level)
         for handler in logger.handlers:
-            handler.setFormatter(logging.Formatter(options.torn_logformat))
+            handler.setFormatter(logging.Formatter(options.tort_logformat))
 
         if log_handler:
             logger.addHandler(log_handler)
@@ -60,7 +60,7 @@ class PageLogger(logging.LoggerAdapter):
 
     def __init__(self, request, request_id, handler_name):
         self.request = request
-        logging.LoggerAdapter.__init__(self, torn_log, {'request_id': str(request_id), 'event_queue': None})
+        logging.LoggerAdapter.__init__(self, tort_log, {'request_id': str(request_id), 'event_queue': None})
         self.started = time.time()
         self.request_id = request_id
         self.handler_name = handler_name
@@ -101,6 +101,6 @@ class PageLogger(logging.LoggerAdapter):
                    ('total', int(1000 * self.request.request_time()))
                ] + additional_data
 
-        self.info('TORN {}'.format(' '.join('{}={}'.format(k, v) for (k, v) in data)))
+        self.info('TORT {}'.format(' '.join('{}={}'.format(k, v) for (k, v) in data)))
 
         self._completed = True

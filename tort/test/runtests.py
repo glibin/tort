@@ -7,7 +7,7 @@ import warnings
 
 
 TEST_MODULES = [
-    'torn.test.import_test',
+    'tort.test.import_test',
 ]
 
 
@@ -16,13 +16,13 @@ def all():
 
 
 def test_runner_factory(stderr):
-    class TornTextTestRunner(unittest.TextTestRunner):
+    class TortTextTestRunner(unittest.TextTestRunner):
         def __init__(self, *args, **kwargs):
             kwargs['stream'] = stderr
-            super(TornTextTestRunner, self).__init__(*args, **kwargs)
+            super(TortTextTestRunner, self).__init__(*args, **kwargs)
 
         def run(self, test):
-            result = super(TornTextTestRunner, self).run(test)
+            result = super(TortTextTestRunner, self).run(test)
             if result.skipped:
                 skip_reasons = set(reason for (test, reason) in result.skipped)
                 self.stream.write(
@@ -34,7 +34,7 @@ def test_runner_factory(stderr):
                 self.stream.write('\n')
             return result
 
-    return TornTextTestRunner
+    return TortTextTestRunner
 
 
 class LogCounter(logging.Filter):
@@ -80,10 +80,10 @@ def main():
     # Tornado generally shouldn't use anything deprecated, but some of
     # our dependencies do (last match wins).
     warnings.filterwarnings('ignore', category=DeprecationWarning)
-    warnings.filterwarnings('error', category=DeprecationWarning, module=r'torn\..*')
+    warnings.filterwarnings('error', category=DeprecationWarning, module=r'tort\..*')
     warnings.filterwarnings('ignore', category=PendingDeprecationWarning)
     warnings.filterwarnings(
-        'error', category=PendingDeprecationWarning, module=r'torn\..*'
+        'error', category=PendingDeprecationWarning, module=r'tort\..*'
     )
 
     logging.getLogger('tornado.access').setLevel(logging.CRITICAL)

@@ -11,13 +11,13 @@ _import_everything = b"""
 import asyncio
 asyncio.set_event_loop(None)
 
-import torn.version
-import torn.logger
-import torn.request_id
-import torn.handler
-import torn.util.parse
-import torn.util.request
-import torn.util.xml_etree
+import tort.version
+import tort.logger
+import tort.request_id
+import tort.handler
+import tort.util.parse
+import tort.util.request
+import tort.util.xml_etree
 """
 
 

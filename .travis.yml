@@ -14,7 +14,7 @@ install:
     - python setup.py install
 
 script:
-    - export TARGET="-m torn.test.runtests"
+    - export TARGET="-m tort.test.runtests"
     - python -bb $TARGET
     - python -O $TARGET
     - LANG=C python $TARGET

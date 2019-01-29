@@ -1,11 +1,11 @@
-from ..logger import torn_log
+from ..logger import tort_log
 
 native_etree = False
 
 try:
     from lxml import etree
 except ImportError:
-    torn_log.info('lxml not installed. Using native etree implementation')
+    tort_log.info('lxml not installed. Using native etree implementation')
     native_etree = True
     import xml.etree.ElementTree as etree
 

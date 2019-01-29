@@ -3,7 +3,7 @@ from setuptools import setup
 
 kwargs = {}
 
-with open('torn/version.py') as f:
+with open('tort/version.py') as f:
     ns = {}
     exec(f.read(), ns)
     version = ns['version']
@@ -19,13 +19,14 @@ python_requires = '>= 3.7'
 kwargs['python_requires'] = python_requires
 
 setup(
-    name='torn',
+    name='tort',
     version=version,
-    description='Torn - Tornado framework helper functions',
-    url='https://github.com/glibin/torn',
-    download_url='https://github.com/glibin/torn/tarball/{}'.format(version),
-    packages=['torn', 'torn.test', 'torn.util'],
+    description='Tort - Tornado framework helper functions',
+    url='https://github.com/glibin/tort',
+    download_url='https://github.com/glibin/tort/tarball/{}'.format(version),
+    packages=['tort', 'tort.test', 'tort.util'],
     install_requires=install_requires,
+    long_description_content_type='text/x-rst',
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',

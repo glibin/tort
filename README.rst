@@ -1,4 +1,4 @@
-Torn
+Tort
 ====
 
 Tornado framework helpers.
@@ -15,7 +15,7 @@ Add Request Id to all requests
     import logging
     import tornado.ioloop
     import tornado.web
-    from torn.logger import configure_logging
+    from tort.logger import configure_logging
 
     class MainHandler(tornado.web.RequestHandler):
         def get(self):
