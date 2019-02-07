@@ -1,5 +1,6 @@
 import os
 import asyncio
+import time
 from itertools import count
 import hashlib
 import random
@@ -150,7 +151,9 @@ class RequestHandler(tornado.web.RequestHandler):
             result = RequestResult(tornado.httpclient.HTTPResponse(
                 request,
                 599,
-                error=e
+                error=e,
+                request_time=time.time() - request.start_time,
+                start_time=request.start_time
             ), None)
 
         self.responses[request.name] = result
