@@ -16,8 +16,8 @@ from .util.request import make_qs, real_ip
 from .util.parse import parse_json, parse_xml
 
 
-define('tortik_max_clients', default=200, type=int, help='Max clients (requests) for http_client')
-define('tortik_timeout_multiplier', default=1.0, type=float, help='Timeout multiplier (affects all requests)')
+define('tort_max_clients', default=200, type=int, help='Max clients (requests) for http_client')
+define('tort_timeout_multiplier', default=1.0, type=float, help='Timeout multiplier (affects all requests)')
 
 stats = count()
 
@@ -45,7 +45,7 @@ class RequestHandler(tornado.web.RequestHandler):
     def get_global_http_client():
         if not hasattr(RequestHandler, '_http_client'):
             RequestHandler._http_client = tornado.httpclient.AsyncHTTPClient(
-                max_clients=options.tortik_max_clients)
+                max_clients=options.tort_max_clients)
 
         return RequestHandler._http_client
 
@@ -114,8 +114,8 @@ class RequestHandler(tornado.web.RequestHandler):
             method=method,
             headers=headers,
             body=body,
-            connect_timeout=connect_timeout * options.tortik_timeout_multiplier,
-            request_timeout=request_timeout * options.tortik_timeout_multiplier,
+            connect_timeout=connect_timeout * options.tort_timeout_multiplier,
+            request_timeout=request_timeout * options.tort_timeout_multiplier,
             follow_redirects=follow_redirects,
             **kwargs
         )
@@ -143,7 +143,16 @@ class RequestHandler(tornado.web.RequestHandler):
                                         data=request[2] if len(request) == 3 else '')
 
         self.log.request_started(request)
-        result = self._process_response(await self.http_client.fetch(request))
+
+        try:
+            result = self._process_response(await self.http_client.fetch(request, raise_error=False))
+        except Exception as e:
+            result = RequestResult(tornado.httpclient.HTTPResponse(
+                request,
+                599,
+                error=e
+            ), None)
+
         self.responses[request.name] = result
         self.log.request_complete(result.response)
 
