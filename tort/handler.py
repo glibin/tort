@@ -13,7 +13,7 @@ from tornado.options import options, define
 
 from .request_id import set as set_request_id
 from .logger import PageLogger
-from .util.request import make_qs, real_ip
+from .util.request import HTTPTortRequest, make_qs, real_ip
 from .util.parse import parse_json, parse_xml
 
 
@@ -57,7 +57,7 @@ class RequestHandler(tornado.web.RequestHandler):
         self.log.complete_logging(self.get_status())
 
     def make_request(self, name, method='GET', full_url=None, url_prefix=None, path='', data='', headers=None,
-                     connect_timeout=1, request_timeout=2, follow_redirects=True, **kwargs):
+                     connect_timeout=1, request_timeout=2, follow_redirects=True, retry_count=0, **kwargs):
         """
         Class for easier constructing ``tornado.httpclient.HTTPRequest`` object.
         Request url could be constructed with two ways:
@@ -75,6 +75,7 @@ class RequestHandler(tornado.web.RequestHandler):
         :param float connect_timeout: Timeout for initial connection in seconds
         :param float request_timeout: Timeout for entire request in seconds
         :param bool follow_redirects: Should redirects be followed automatically or return the 3xx response?
+        :param int retry_count: How much  times the request should retry
         :param kwargs: any other ``tornado.httpclient.HTTPRequest`` arguments
         :return: ``tornado.httpclient.HTTPRequest``
         """
@@ -110,7 +111,7 @@ class RequestHandler(tornado.web.RequestHandler):
             'Content-Type': headers.get('Content-Type', 'application/x-www-form-urlencoded')
         })
 
-        req = tornado.httpclient.HTTPRequest(
+        request_params = dict(
             url=urlunsplit((scheme, url_prefix, path, query, '')),
             method=method,
             headers=headers,
@@ -120,8 +121,8 @@ class RequestHandler(tornado.web.RequestHandler):
             follow_redirects=follow_redirects,
             **kwargs
         )
-        req.name = name
-        return req
+
+        return HTTPTortRequest(name, retry_count, **request_params)
 
     def _process_response(self, response) -> RequestResult:
         content_type = response.headers.get('Content-Type', '').split(';')[0]
@@ -146,18 +147,22 @@ class RequestHandler(tornado.web.RequestHandler):
         self.log.request_started(request)
 
         try:
-            result = self._process_response(await self.http_client.fetch(request, raise_error=False))
+            result = self._process_response(await self.http_client.fetch(request.request, raise_error=False))
         except Exception as e:
             result = RequestResult(tornado.httpclient.HTTPResponse(
-                request,
+                request.request,
                 599,
                 error=e,
-                request_time=time.time() - request.start_time,
-                start_time=request.start_time
+                request_time=time.time() - request.request.start_time,
+                start_time=request.request.start_time
             ), None)
 
-        self.responses[request.name] = result
         self.log.request_complete(result.response)
+
+        if result.response.code >= 500 and request.retry_count > 0:
+            result = await self.fetch_request(request.retry())
+
+        self.responses[request.name] = result
 
         return result
 

@@ -75,14 +75,15 @@ class PageLogger(logging.LoggerAdapter):
         return msg, kwargs
 
     def request_started(self, request):
-        self.debug(f'Requesting {request.method} {request.url}')
+        name = 'Retrying' if request.is_retry else 'Requesting'
+        self.debug(f'{name} {request.request.method} {request.request.url}')
 
     def request_complete(self, resp):
         level = logging.DEBUG
         if 400 <= resp.code < 500:
             level = logging.INFO
         elif resp.code >= 500:
-            level = logging.ERROR
+            level = logging.WARNING
 
         log = f'Complete {resp.code} {resp.request.method} {resp.request.url} in {int(resp.request_time * 1000.0)}ms'
         self.log(level, log)

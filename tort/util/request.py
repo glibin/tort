@@ -1,4 +1,5 @@
 from urllib.parse import urlencode, urlsplit, parse_qs, urlunsplit
+from tornado.httpclient import HTTPRequest
 
 
 def make_list(val):
@@ -58,3 +59,16 @@ def make_qs(query_args):
     qs = urlencode(kv_pairs, doseq=True)
 
     return qs
+
+
+class HTTPTortRequest(object):
+    def __init__(self, name: str, retry_count: int = None, is_retry: bool = False, **request_params) -> None:
+        self.name = name
+        self.request = HTTPRequest(**request_params)
+        self.retry_count = retry_count or 0
+        self.is_retry = is_retry
+
+        self._initial_params = request_params
+
+    def retry(self) -> 'HTTPTortRequest':
+        return HTTPTortRequest(self.name, self.retry_count - 1, True, **self._initial_params)
