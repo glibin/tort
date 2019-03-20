@@ -8,7 +8,7 @@ with open('tort/version.py') as f:
     exec(f.read(), ns)
     version = ns['version']
 
-install_requires = ['tornado >= 6.0a1']
+install_requires = ['tornado >= 6.0.1']
 
 
 with open('README.rst') as f:
