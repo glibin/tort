@@ -11,7 +11,7 @@ Use cases
 Add Request Id to all requests
 ------------------------------
 
-.. code-block:: python
+```
     import logging
     import tornado.ioloop
     import tornado.web
@@ -32,3 +32,4 @@ Add Request Id to all requests
         app = make_app()
         app.listen(8888)
         tornado.ioloop.IOLoop.current().start()
+```

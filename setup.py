@@ -11,7 +11,7 @@ with open('tort/version.py') as f:
 install_requires = ['tornado >= 6.0.1']
 
 
-with open('README.rst') as f:
+with open('README.md') as f:
     kwargs['long_description'] = f.read()
 
 
@@ -25,8 +25,8 @@ setup(
     url='https://github.com/glibin/tort',
     download_url='https://github.com/glibin/tort/tarball/{}'.format(version),
     packages=['tort', 'tort.test', 'tort.util'],
+    long_description_content_type='text/markdown',
     install_requires=install_requires,
-    long_description_content_type='text/x-rst',
     classifiers=[
         'License :: OSI Approved :: MIT License',
         'Programming Language :: Python',
